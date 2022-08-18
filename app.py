@@ -1,15 +1,6 @@
 import json
 import pickle
-
-#CDS libs 
 import tensorflow as tf
-import tensorflow_hub as hub
-import tensorflow_text as text
-import nltk
-from youtube_transcript_api import YouTubeTranscriptApi
-from urllib.parse import urlparse, parse_qs
-from nltk.corpus import stopwords
-
 
 from flask import Flask,request,app,jsonify,url_for,render_template
 import numpy as np
@@ -19,18 +10,6 @@ app=Flask(__name__)
 ## Load the model
 regmodel=pickle.load(open('regression_model.pkl','rb'))
 scalar=pickle.load(open('scaler.pkl','rb'))
-
-
-## getting the cds model
-my_saved_model = tf.keras.models.load_model(
-       ('myModel.h5'),
-       custom_objects={'KerasLayer':hub.KerasLayer}
-)
-
-
-nltk.download('stopwords')
-
-
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -47,59 +26,11 @@ def predict_api():
 
 @app.route('/predict',methods=['POST'])
 def predict():
-    # adding the code for cds
-    
-    youtube_link = 'https://youtu.be/FRptcX6iDVc' #input("Please enter the video link for presentation..")
-    if youtube_link != '':
-        v_transcript = transcript(extract_video_id(youtube_link))
-
-
-    #if v_transcript != 'Nosubtitles':
-    #    preds = my_saved_model.predict((np.array([v_transcript]).reshape(1,-1)))[0][0]
-    preds = 'Comming soon...'
-
     data=[float(x) for x in request.form.values()]
     final_input=scalar.transform(np.array(data).reshape(1,-1))
     print(final_input)
     output=regmodel.predict(final_input)[0]
-    return render_template("home.html",prediction_text=f"The House price prediction is{output} and submission {preds}")
-
-
-def extract_video_id(url):
-    query = urlparse(url)
-    if query.hostname == 'youtu.be': return query.path[1:]
-    if query.hostname in ('www.youtube.com', 'youtube.com'):
-        if query.path == '/watch': return parse_qs(query.query)['v'][0]
-        if query.path[:7] == '/embed/': return query.path.split('/')[2]
-        if query.path[:3] == '/v/': return query.path.split('/')[2]
-    return "video not on Youtube or Does not exist"
-
-def transcript(video_id):
-    try :
-        m = YouTubeTranscriptApi.get_transcript(video_id)
-        line = []
-        new_line=[]
-        stopwords_line=""
-        for word in m:
-#             line.append(word['text'])
-            for w in word['text'].split(" "):
-                line.append(w)
-#             line = line + (word['text'])
-        stopwords_line=remove_stopwords(line)
-        return stopwords_line
-    except :
-        return 'Nosubtitles'
-
-def remove_stopwords(word_list):
-        processed_word_list = []
-        line = ""
-        for word in word_list:
-            word = word.lower() # in case they arenet all lower cased
-            if word not in stopwords.words("english") and len(word) >=3 :
-                processed_word_list.append(word)
-        for word in processed_word_list:
-            line = line + word + " "
-        return line   
+    return render_template("home.html",prediction_text="The House price prediction is {}".format(output))
 
 
 
