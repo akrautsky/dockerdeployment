@@ -54,9 +54,9 @@ def predict():
         v_transcript = transcript(extract_video_id(youtube_link))
 
 
-    if v_transcript != 'Nosubtitles':
-        preds = my_saved_model.predict((np.array([v_transcript]).reshape(1,-1)))[0][0]
-
+    #if v_transcript != 'Nosubtitles':
+    #    preds = my_saved_model.predict((np.array([v_transcript]).reshape(1,-1)))[0][0]
+    preds = 'Comming soon...'
 
     data=[float(x) for x in request.form.values()]
     final_input=scalar.transform(np.array(data).reshape(1,-1))
