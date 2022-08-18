@@ -1,8 +1,14 @@
+nltk
 pandas
+tensorflow
+tensorflow_text
+tensorflow_hub
 numpy
-matplotlib
 seaborn
 sklearn
+matplotlib
+wandb
+optuna
+youtube_transcript_api
 flask
 gunicorn
-tensorflow
