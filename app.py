@@ -22,15 +22,19 @@ regmodel=pickle.load(open('regression_model.pkl','rb'))
 scalar=pickle.load(open('scaler.pkl','rb'))
 
 
+
+
+
+@app.route('/')
+def home():
+    return render_template('home.html')
+
 ## load the CDS model
 my_saved_model = tf.keras.models.load_model(
        ('myModel.h5'),
        custom_objects={'KerasLayer':hub.KerasLayer}
 )
 
-@app.route('/')
-def home():
-    return render_template('home.html')
 
 @app.route('/predict_api',methods=['POST'])
 def predict_api():
