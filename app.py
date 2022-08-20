@@ -29,11 +29,6 @@ scalar=pickle.load(open('scaler.pkl','rb'))
 def home():
     return render_template('home.html')
 
-## load the CDS model
-my_saved_model = tf.keras.models.load_model(
-       ('myModel.h5'),
-       custom_objects={'KerasLayer':hub.KerasLayer}
-)
 
 
 @app.route('/predict_api',methods=['POST'])
